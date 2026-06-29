@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "BlackBird",
+  "name": "Cuteboard",
   "version": "1.0.0",
   "description": "Customize your school portal with custom backgrounds and GIFs",
   "permissions": ["activeTab", "storage", "scripting", "unlimitedStorage"],
