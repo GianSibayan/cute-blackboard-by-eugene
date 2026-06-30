@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kurenaido&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Zen Kurenaido', sans-serif;
+      background-color: #F5F0E6;
+      background-image: radial-gradient(circle, #C9A880 1px, transparent 1px);
+      background-size: 24px 24px;
+      min-height: 100vh;
+      padding: 20px 16px;
+      color: #2C1810;
+    }
+
+    .header { margin-bottom: 18px; }
+    .logo { font-size: 20px; font-weight: 700; }
+    .sub { font-size: 11px; color: #A07850; margin-top: 2px; }
+
+    .card { background: #1A1714; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+    .label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6B5040; margin-bottom: 10px; }
+
+    .pick-btn {
+      width: 100%; padding: 10px; background: transparent;
+      border: 2px dashed #4A3728; border-radius: 10px;
+      color: #C9A880; font-size: 13px; font-family: inherit; cursor: pointer; transition: all 0.2s;
+    }
+    .pick-btn:hover { border-color: #C9A880; color: #F5F0E6; }
+    .pick-btn.active { border-color: #C9A880; animation: blink 0.9s infinite; }
+    @keyframes blink { 0%,100% { border-color: #6B4226; } 50% { border-color: #4A3728; } }
+
+    .sel-tag { margin-top: 8px; padding: 7px 10px; background: #2A1F18; border-radius: 8px; font-size: 12px; color: #C9A880; word-break: break-all; }
+    .hidden { display: none !important; }
+
+    .mode-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+    .mode-tab {
+      flex: 1; padding: 9px 4px; background: #2A1F18; border: none; border-radius: 9px;
+      color: #6B5040; font-size: 11px; font-family: inherit; cursor: pointer; transition: all 0.2s;
+    }
+    .mode-tab.active { background: #6B4226; color: #F5F0E6; }
+
+    .dropzone {
+      border: 2px dashed #4A3728; border-radius: 10px; padding: 22px 16px; text-align: center;
+      cursor: pointer; position: relative; transition: all 0.2s; margin-bottom: 14px;
+    }
+    .dropzone:hover, .dropzone.drag { border-color: #C9A880; }
+    .dropzone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .drop-icon { font-size: 26px; display: block; margin-bottom: 6px; }
+    .drop-txt { font-size: 12px; color: #8B7060; margin-bottom: 4px; }
+    .drop-hint { font-size: 10px; color: #6B5040; }
+
+    #prevImg { width: 100%; height: 90px; object-fit: cover; border-radius: 10px; display: block; }
+    #prevName { font-size: 11px; color: #6B5040; margin-top: 6px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #prevSize { font-size: 11px; margin-top: 4px; text-align: center; }
+
+    .size-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .size-opt {
+      background: #2A1F18; border: 2px solid transparent; border-radius: 10px; padding: 10px 6px;
+      cursor: pointer; text-align: center; transition: all 0.2s;
+    }
+    .size-opt.selected { border-color: #C9A880; background: #3A2A1E; }
+    .size-opt-icon { font-size: 16px; display: block; margin-bottom: 4px; }
+    .size-opt-label { font-size: 10px; color: #C9A880; font-weight: 700; }
+    .size-opt-hint { font-size: 9px; color: #6B5040; margin-top: 2px; }
+
+    .opacity-row { margin-bottom: 4px; }
+    .opacity-row .label { display: flex; justify-content: space-between; }
+    #opacityVal { color: #C9A880; }
+    input[type="range"] { width: 100%; accent-color: #C9A880; }
+
+    .color-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .color-row span { font-size: 12px; color: #C9A880; }
+    input[type="color"] { width: 44px; height: 30px; border: none; border-radius: 8px; cursor: pointer; background: none; padding: 0; }
+    input[type="checkbox"] { width: 18px; height: 18px; accent-color: #C9A880; }
+
+    .hide-note { font-size: 12px; color: #8B7060; line-height: 1.5; }
+
+    .btn-row { display: flex; gap: 8px; margin-bottom: 10px; }
+    .btn { flex: 1; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; border: none; transition: all 0.2s; }
+    .btn-primary { background: #6B4226; color: #F5F0E6; }
+    .btn-primary:hover:not(:disabled) { background: #3D1F0A; transform: translateY(-1px); }
+    .btn-primary:disabled { background: #4A3728; color: #6B5040; cursor: not-allowed; }
+    .btn-secondary { background: transparent; color: #C9A880; border: 2px solid #4A3728; }
+    .btn-secondary:hover { border-color: #C9A880; }
+
+    .footer { text-align: center; font-size: 10px; color: #6B5040; letter-spacing: 0.05em; }
+    .blocked { text-align: center; padding: 40px 12px; color: #8B7060; font-size: 13px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">🐦 BlackBoard Editor 3000</div>
+    <div class="sub">by Eugene</div>
+  </div>
+
+  <div id="app">
+
+    <div class="card">
+      <div class="label">① Select Element</div>
+      <button id="pickBtn" class="pick-btn">Click to pick an element</button>
+      <div id="selTag" class="sel-tag hidden"></div>
+    </div>
+
+    <div class="card">
+      <div class="label">② Choose What To Do</div>
+      <div class="mode-tabs">
+        <button class="mode-tab active" data-mode="image">Image</button>
+        <button class="mode-tab" data-mode="color">Color</button>
+        <button class="mode-tab" data-mode="hide">Hide</button>
+      </div>
+
+      <div id="panel-image">
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" accept="image/*,.gif">
+          <span class="drop-icon">🖼️</span>
+          <p class="drop-txt">Drop or click to upload</p>
+          <p class="drop-hint">PNG · JPG · GIF · WebP</p>
+        </div>
+
+        <div id="preview" class="hidden" style="margin-bottom:14px;">
+          <img id="prevImg" alt="preview">
+          <p id="prevName"></p>
+          <p id="prevSize"></p>
+        </div>
+
+        <div class="label">Size & Fit</div>
+        <div class="size-grid">
+          <div class="size-opt selected" data-size="cover">
+            <span class="size-opt-icon">🔲</span>
+            <span class="size-opt-label">Cover</span>
+            <div class="size-opt-hint">fills & crops</div>
+          </div>
+          <div class="size-opt" data-size="tile">
+            <span class="size-opt-icon">📜</span>
+            <span class="size-opt-label">Tile Down</span>
+            <div class="size-opt-hint">long lists</div>
+          </div>
+          <div class="size-opt" data-size="contain">
+            <span class="size-opt-icon">🖼️</span>
+            <span class="size-opt-label">Fit Whole</span>
+            <div class="size-opt-hint">no crop</div>
+          </div>
+          <div class="size-opt" data-size="stretch">
+            <span class="size-opt-icon">↔️</span>
+            <span class="size-opt-label">Stretch</span>
+            <div class="size-opt-hint">may distort</div>
+          </div>
+        </div>
+
+        <div class="color-row" style="margin-bottom:14px;">
+          <span>📌 Keep still while scrolling</span>
+          <input type="checkbox" id="fixedToggle">
+        </div>
+
+        <div class="opacity-row">
+          <div class="label">Opacity <span id="opacityVal">100%</span></div>
+          <input type="range" id="opacitySlider" min="0" max="100" value="100">
+        </div>
+      </div>
+
+      <div id="panel-color" class="hidden">
+        <div class="color-row">
+          <span>Background color</span>
+          <input type="color" id="bgColorInput" value="#6B4226">
+        </div>
+        <div class="color-row">
+          <span>Text color</span>
+          <input type="color" id="textColorInput" value="#ffffff">
+        </div>
+      </div>
+
+      <div id="panel-hide" class="hidden">
+        <p class="hide-note">This completely removes the selected element from the page — fully transparent, takes up no space. Use Clear to bring it back anytime.</p>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button id="applyBtn" class="btn btn-primary" disabled>Apply ✓</button>
+      <button id="deleteBtn" class="btn btn-secondary">Clear 🗑️</button>
+    </div>
+
+    <div class="footer">blackboard editor 3000 · v1.1.0</div>
+  </div>
+
+  <div id="blocked" class="blocked hidden">
+    <br><br>This only works on<br><strong>mapua.blackboard.com</strong><br><br>Go to your Blackboard portal and open this panel again!
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
